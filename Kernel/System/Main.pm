@@ -368,6 +368,12 @@ sub FileRead {
     my $String = do { local $/; <$FH> };
     close $FH;
 
+    # xueron: 20131023fix, set utf8 flag on for utf8 files
+    eval {my $tmp = $String; Encode::decode("utf8", $tmp, 1)};
+    if (!$@) {
+        $Self->{EncodeObject}->EncodeInput( \$String );
+    }
+
     return \$String;
 }
 
