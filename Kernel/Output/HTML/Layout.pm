@@ -12,6 +12,7 @@ package Kernel::Output::HTML::Layout;
 use strict;
 use warnings;
 
+use Encode;
 use Kernel::Language;
 use Kernel::System::HTMLUtils;
 use Kernel::System::JSON;
@@ -552,6 +553,13 @@ sub Output {
         if ( open my $TEMPLATEIN, '<', $File ) {
             ## use critic
             $TemplateString = do { local $/; <$TEMPLATEIN> };
+            
+            # xueron: 20131023 fix template files with chinese
+            eval {my $tmp = $TemplateString; Encode::decode("utf8", $tmp, 1)};
+            if (!$@) {
+                $TemplateString = Encode::decode("utf8", $TemplateString);
+            }
+
             close $TEMPLATEIN;
         }
         else {
